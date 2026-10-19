@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+    EqGen UI strings. A separate file so it never clashes with the template's strings.xml
+    (Android merges every values/*.xml file). Do not add app_name here.
+-->
+<resources>
+    <string name="eqgen_title" translatable="false">ΣqGen</string>
+    <string name="eqgen_title_description" translatable="false">EqGen</string>
+
+    <!-- Equation type section -->
+    <string name="section_equation_type">Equation type</string>
+    <string name="section_collapse">Collapse</string>
+    <string name="section_expand">Expand</string>
+    <string name="section_state_expanded">Expanded</string>
+    <string name="section_state_collapsed">Collapsed</string>
+
+    <!-- Mode tiles: title, subtitle, equation form -->
+    <string name="tile_linear_one_var_title">Linear</string>
+    <string name="tile_linear_one_var_subtitle">1 variable</string>
+    <string name="tile_linear_two_var_title">Linear</string>
+    <string name="tile_linear_two_var_subtitle">2 variables</string>
+    <string name="tile_linear_pair_title">Pair of linear</string>
+    <string name="tile_linear_pair_subtitle">2 variables, 2 equations</string>
+    <string name="tile_system3_title">System of linear</string>
+    <string name="tile_system3_subtitle">3 variables, 3 equations</string>
+    <string name="tile_quadratic_title">Quadratic</string>
+    <string name="tile_quadratic_subtitle">1 variable</string>
+    <string name="tile_cubic_title">Cubic</string>
+    <string name="tile_cubic_subtitle">1 variable</string>
+    <string name="tile_form_linear_one_var" translatable="false">ax + b = 0</string>
+    <string name="tile_form_linear_two_var" translatable="false">ax + by = c</string>
+    <string name="tile_form_linear_pair" translatable="false">ax + by = c\ndx + ey = f</string>
+    <string name="tile_form_system3" translatable="false">ax + by + cz = d</string>
+    <string name="tile_form_quadratic" translatable="false">ax² + bx + c = 0</string>
+    <string name="tile_form_cubic" translatable="false">ax³ + bx² + cx + d = 0</string>
+
+    <!-- Summary line (shown collapsed or expanded) -->
+    <string name="summary_linear_one_var">Linear equation · 1 variable</string>
+    <string name="summary_linear_two_var">Linear equation · 2 variables</string>
+    <string name="summary_linear_pair">Pair of linear equations · 2 variables</string>
+    <string name="summary_system3">System of linear equations · 3 variables</string>
+    <string name="summary_quadratic">Quadratic equation · 1 variable</string>
+    <string name="summary_cubic">Cubic equation · 1 variable</string>
+
+    <!-- Mode hints -->
+    <string name="mode_hint_linear_one_var">Enter a root. Generates ax + b = 0 with that root.</string>
+    <string name="mode_hint_linear_two_var">Enter a point (x, y). Generates ax + by = c through it.</string>
+    <string name="mode_hint_linear_pair">Enter a point (x, y). Generates two lines that meet there.</string>
+    <string name="mode_hint_system3">Enter a point (x, y, z). Generates three equations that meet only there.</string>
+    <string name="mode_hint_quadratic">Enter two roots. Generates ax² + bx + c = 0 with them.</string>
+    <string name="mode_hint_cubic">Enter three roots. Generates ax³ + bx² + cx + d = 0 with them.</string>
+
+    <!-- Input fields -->
+    <string name="field_root">Root (x)</string>
+    <string name="field_x" translatable="false">x</string>
+    <string name="field_y" translatable="false">y</string>
+    <string name="field_z" translatable="false">z</string>
+    <string name="field_root1">Root 1</string>
+    <string name="field_root2">Root 2</string>
+    <string name="field_root3">Root 3</string>
+    <string name="error_out_of_range">%1$d to %2$d</string>
+    <string name="error_not_a_number">Whole numbers only</string>
+
+    <!-- Tool row -->
+    <string name="sign_button_label" translatable="false">±</string>
+    <string name="action_change_sign">Change sign of the selected field</string>
+    <string name="action_randomize">Randomize</string>
+
+    <!-- Actions -->
+    <string name="action_generate">Generate</string>
+
+    <!-- Result -->
+    <string name="empty_hint">Enter your values above, then tap Generate.</string>
+    <string name="label_equation">Equation</string>
+    <string name="label_equations">Equations</string>
+    <string name="label_solution">Solution</string>
+    <string name="graph_description">Graph of the equation</string>
+</resources>
