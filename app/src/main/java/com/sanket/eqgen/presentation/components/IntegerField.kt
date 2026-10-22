@@ -12,15 +12,14 @@ import androidx.compose.ui.text.input.KeyboardType
 
 /**
  * A single-line whole-number field. Stateless: the caller owns [value] and cleans it in [onValueChange].
- * Shows [errorText] under the field when it is not null. [onFocused] is called when the field gains
- * focus, so the screen knows which field the ± button acts on.
+ * Shows [errorText] under the field when it is not null. [onFocusChanged] reports every focus gain and loss, so the screen knows which field the ± button acts on.
  */
 @Composable
 fun IntegerField(
     value: String,
     label: String,
     onValueChange: (String) -> Unit,
-    onFocused: () -> Unit,
+    onFocusChanged: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
     errorText: String? = null,
     imeAction: ImeAction = ImeAction.Next,
@@ -29,7 +28,7 @@ fun IntegerField(
     OutlinedTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier.onFocusChanged { if (it.isFocused) onFocused() },
+        modifier = modifier.onFocusChanged { onFocusChanged(it.isFocused) },
         label = { Text(label) },
         isError = errorText != null,
         supportingText = if (errorText != null) {

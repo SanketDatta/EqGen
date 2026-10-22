@@ -227,7 +227,7 @@ Single screen, no navigation `[C]`. Top to bottom:
 6. **Generate** (full-width `Button`): enabled only when every field is valid. If the inputs equal the displayed result's request it regenerates under the rule in section 03; otherwise it generates normally. There is no Retry button. `[C]`
 7. **Result** (after the first Generate): `EquationCard` with the equation text and solution, then the graph when the mode has one (not M5). The card uses `animateContentSize()` so it resizes smoothly between one and three equations. `[C]`
 
-Input rules `[C]`: integers only, optional leading minus, inline error under the field, numeric keyboard. Typed text is cleaned as it arrives. `[P]` Cleaning: ASCII digits only, one leading `-`, at most 3 digits. Out-of-range values (beyond ±100) show an inline error and block Generate. Typed inputs are kept when switching modes, and fields shared between modes carry over.
+Input rules `[C]`: integers only, optional leading minus, inline error under the field, numeric keyboard. Typed text is cleaned as it arrives. `[P]` Cleaning: ASCII digits only, one leading `-`, at most 4 digits (one more than the 3 a valid value needs, so a pasted 1000 shows the range error instead of becoming 100). Out-of-range values (beyond ±100) show an inline error and block Generate. Typed inputs are kept when switching modes, and fields shared between modes carry over.
 IME Done on the last field generates when inputs are valid, then hides the keyboard. `[P]`
 Equation text `[P]`: plain text with a true minus sign (U+2212) and superscripts (², ³); coefficients of 1 are omitted and zero terms are skipped (`x² − 5x + 6 = 0`). Solutions list the roots exactly as entered, one per root (a double root reads `x = 4`, `x = 4`); there is no multiplicity text (deferred, D-034). Equations are laid out in three columns (left side right-aligned, "=", right side left-aligned) with tabular numerals, so the "=" signs line up across lines; lines never wrap, and the card scrolls horizontally if a line is too wide. This uses plain `Row`/`Column` (`Modifier.alignBy` cannot align across separate rows without a custom layout). The card text is selectable for copying.
 No icons from the Compose icon library `[C]` (`material-icons-core` or `-extended`). Every icon is an XML vector asset in `res/drawable`, referenced as `R.drawable.ic_<name>`, added by the developer (D-018, D-032):
@@ -324,9 +324,12 @@ All six modes generate valid, verified equations; regeneration works as specifie
 | D-033 | Dynamic color on API 31+; the template's static purple palette stays below that | C |
 | D-034 | Multiplicity text ("double root") and the live input echo are deferred; roots are listed as entered | C |
 | D-035 | "=" alignment uses plain Row/Column columns, not `alignBy` or a custom layout | C |
+| D-036 | Input cleaning keeps up to 4 digits so over-range pastes show the range error instead of being cut to a valid number | P |
+| D-037 | Focus is a changed event (gain and loss); a blur from a non-focused field is ignored; switching mode clears the focused field | C |
+| D-038 | `presentation` never imports `screens`: `EquationTypeSection` takes `TileSpec` data; `screens` maps `ModeTileSpecs` onto it | C |
 
 ### Open questions
-- **O9 `[O]`:** Items still tagged `[P]` stay unapproved: the input cleaning limits (3 digits), Done-key Generate, and the plain-text equation format (D-021).
+- **O9 `[O]`:** Items still tagged `[P]` stay unapproved: the input cleaning limits (4 typed digits), Done-key Generate, and the plain-text equation format (D-021).
 
 Resolved: O1 (D-010), O2 (D-011), O3 (D-013), O4 (D-015), O5 (D-016), O6 (D-017), O7 (D-023), O8 (D-033).
 
@@ -344,3 +347,5 @@ Integers only; no singular or no-solution systems; no export; one screen; M5 has
 - 2026-10-17: Layer 3 first pass on an API 28 device recorded in section 06 (found chip truncation and the static purple palette).
 - 2026-10-19: scope revised after the UI brainstorm. Added M5 and M6, the tile selector with a collapsible "Equation type" section, Randomize, one focused-field ± button and the ΣqGen branding. Removed the Retry button and the model type `QuadraticEquation` (now `PolynomialEquation`). Deferred the live input echo and multiplicity text. Added D-022 to D-035; D-014 and D-020 superseded; D-021 revised; O7 and O8 resolved.
 - 2026-10-19: implemented the revision. Domain (`PolynomialEquation`, M5 generator, formatter lines, cubic graph support) and state layer (six modes, focus, ±, Randomize, collapse flag, Generate-as-regenerate) with 231 JVM tests in total; tile UI (`EquationTypeSection`, `ModeTileSpecs`, three-column `EquationCard`) written and type-checked against stubs only. Gradle build, Layer 2 and Layer 3 pending. Fixed a `-0.0` duplicate x in the sampler's exact points.
+- 2026-10-19: audit fixes: ± now disables on blur (D-037), 4-digit cleaning (D-036), presentation→screens cycle removed (D-038), `GeneratorMode` order matches tile order and `specFor` fails loudly, duplicate section animation dropped, `collectAsStateWithLifecycle`, U+2212 in the range error. 238 JVM tests plus `ModeTileSpecsTest`.
+- 2026-10-21: added the Layer 2 tests (`androidTest/GeneratorScreenTest.kt`, 8 UI tests plus a rotation test in `GeneratorRotationTest`) and the `RESULT_CARD_TAG` test tag on the result card. Not yet run on a device.

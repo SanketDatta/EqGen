@@ -14,6 +14,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -48,12 +49,12 @@ fun EquationCard(text: EquationText, modifier: Modifier = Modifier) {
                     color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 Row(modifier = Modifier.horizontalScroll(rememberScrollState())) {
-                    Column(horizontalAlignment = androidx.compose.ui.Alignment.End) {
+                    Column(horizontalAlignment = Alignment.End) {
                         text.equations.forEach { line ->
                             Text(text = line.left, style = equationStyle, softWrap = false, textAlign = TextAlign.End)
                         }
                     }
-                    Column(horizontalAlignment = androidx.compose.ui.Alignment.CenterHorizontally) {
+                    Column(horizontalAlignment = Alignment.CenterHorizontally) {
                         text.equations.forEach { _ ->
                             Text(text = " = ", style = equationStyle, softWrap = false)
                         }

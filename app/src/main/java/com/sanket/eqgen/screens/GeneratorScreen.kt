@@ -31,6 +31,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.platform.testTag
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.contentDescription
@@ -50,6 +51,9 @@ import com.sanket.eqgen.presentation.components.IntegerField
 import com.sanket.eqgen.presentation.components.EquationTypeSection
 import com.sanket.eqgen.presentation.graph.GraphView
 
+/** Test tag of the result card, so UI tests can read the displayed equation. */
+const val RESULT_CARD_TAG = "equationCard"
+
 /**
  * The single v1 screen (spec section 05). Stateless: everything it shows comes from [state], and every
  * user action goes out through a callback, so it can be previewed and UI-tested without a ViewModel.
@@ -61,7 +65,7 @@ fun GeneratorScreen(
     onModeSelected: (GeneratorMode) -> Unit,
     onSetupExpandedChange: (Boolean) -> Unit,
     onInputChanged: (InputField, String) -> Unit,
-    onFieldFocused: (InputField) -> Unit,
+    onFieldFocused: (InputField, Boolean) -> Unit,
     onToggleSign: () -> Unit,
     onRandomize: () -> Unit,
     onGenerate: () -> Unit,
@@ -93,10 +97,12 @@ fun GeneratorScreen(
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             EquationTypeSection(
-                selected = state.mode,
+                tiles = modeTiles,
+                selectedIndex = modeTileSpecs.indexOfFirst { it.mode == state.mode },
+                summary = stringResource(specFor(state.mode).summary),
                 expanded = state.setupExpanded,
                 onExpandedChange = onSetupExpandedChange,
-                onModeSelected = onModeSelected,
+                onTileSelected = { index -> onModeSelected(modeTileSpecs[index].mode) },
             )
 
             Text(
@@ -116,7 +122,7 @@ fun GeneratorScreen(
                             value = fieldState.text,
                             label = stringResource(fieldState.field.labelRes()),
                             onValueChange = { text -> onInputChanged(fieldState.field, text) },
-                            onFocused = { onFieldFocused(fieldState.field) },
+                            onFocusChanged = { focused -> onFieldFocused(fieldState.field, focused) },
                             modifier = Modifier.weight(1f),
                             errorText = fieldState.error?.let { error -> errorMessage(error) },
                             imeAction = if (isLast) ImeAction.Done else ImeAction.Next,
@@ -196,7 +202,7 @@ private fun ColumnScope.ResultSection(result: GenerationResult?) {
         }
     }
 
-    EquationCard(text = text)
+    EquationCard(text = text, modifier = Modifier.testTag(RESULT_CARD_TAG))
     if (graph != null) GraphView(
         plot = graph.second,
         viewport = graph.first,
@@ -211,7 +217,7 @@ private fun ColumnScope.ResultSection(result: GenerationResult?) {
 
 @Composable
 private fun errorMessage(error: InputError): String = when (error) {
-    InputError.OutOfRange -> stringResource(R.string.error_out_of_range, -MAX_INPUT_ABS, MAX_INPUT_ABS)
+    InputError.OutOfRange -> stringResource(R.string.error_out_of_range, MAX_INPUT_ABS)
     InputError.NotAWholeNumber -> stringResource(R.string.error_not_a_number)
 }
 
@@ -236,7 +242,7 @@ private fun PreviewScreen(state: GeneratorUiState) {
             onModeSelected = {},
             onSetupExpandedChange = {},
             onInputChanged = { _, _ -> },
-            onFieldFocused = {},
+            onFieldFocused = { _, _ -> },
             onToggleSign = {},
             onRandomize = {},
             onGenerate = {},

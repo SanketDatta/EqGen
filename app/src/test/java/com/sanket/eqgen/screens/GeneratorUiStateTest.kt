@@ -128,7 +128,7 @@ class GeneratorUiStateTest {
     fun withInput_sanitizesText() {
         assertEquals("12", initial.type(InputField.Root, "1.2").fields.single().text)
         assertEquals("-5", initial.type(InputField.Root, "-5x").fields.single().text)
-        assertEquals("123", initial.type(InputField.Root, "12345").fields.single().text)
+        assertEquals("1234", initial.type(InputField.Root, "12345").fields.single().text)
     }
 
     @Test
@@ -243,6 +243,15 @@ class GeneratorUiStateTest {
             assertEquals(setOf(InputField.X, InputField.Y, InputField.Z), filled.inputs.keys)
             assertSame(sampleResult, filled.result)
         }
+    }
+
+    @Test
+    fun switchingMode_clearsTheFocusedField() {
+        val state = initial.withMode(GeneratorMode.LinearTwoVar).withFocus(InputField.X)
+        assertTrue(state.canToggleSign)
+        val switched = state.withMode(GeneratorMode.LinearPair) // X exists here too
+        assertNull(switched.focusedField)
+        assertFalse(switched.canToggleSign)
     }
 
     @Test

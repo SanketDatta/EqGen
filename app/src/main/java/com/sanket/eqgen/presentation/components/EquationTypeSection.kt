@@ -1,7 +1,7 @@
 package com.sanket.eqgen.presentation.components
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
+import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -29,21 +29,26 @@ import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.unit.dp
 import com.sanket.eqgen.R
-import com.sanket.eqgen.screens.GeneratorMode
-import com.sanket.eqgen.screens.ModeTileSpec
-import com.sanket.eqgen.screens.modeTileSpecs
-import com.sanket.eqgen.screens.specFor
+
+/** The three text lines of one tile. Plain string resources, so `presentation` knows nothing about modes. */
+data class TileSpec(
+    @StringRes val title: Int,
+    @StringRes val subtitle: Int,
+    @StringRes val form: Int,
+)
 
 /**
- * The collapsible "Equation type" card: a header (tap to expand or collapse), a six-tile grid of modes in
+ * The collapsible "Equation type" card: a header (tap to expand or collapse), a grid of [tiles] in
  * two columns, and a summary line that stays visible when collapsed. Stateless.
  */
 @Composable
 fun EquationTypeSection(
-    selected: GeneratorMode,
+    tiles: List<TileSpec>,
+    selectedIndex: Int,
+    summary: String,
     expanded: Boolean,
     onExpandedChange: (Boolean) -> Unit,
-    onModeSelected: (GeneratorMode) -> Unit,
+    onTileSelected: (Int) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     val actionLabel = stringResource(if (expanded) R.string.section_collapse else R.string.section_expand)
@@ -51,7 +56,7 @@ fun EquationTypeSection(
         if (expanded) R.string.section_state_expanded else R.string.section_state_collapsed,
     )
 
-    Card(modifier = modifier.fillMaxWidth().animateContentSize()) {
+    Card(modifier = modifier.fillMaxWidth()) {
         Column(modifier = Modifier.padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
             Row(
                 modifier = Modifier
@@ -76,16 +81,16 @@ fun EquationTypeSection(
                     modifier = Modifier.selectableGroup(),
                     verticalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
-                    modeTileSpecs.chunked(2).forEach { rowSpecs ->
+                    tiles.withIndex().chunked(2).forEach { rowTiles ->
                         Row(
                             modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                         ) {
-                            rowSpecs.forEach { spec ->
+                            rowTiles.forEach { (index, spec) ->
                                 ModeTile(
                                     spec = spec,
-                                    selected = spec.mode == selected,
-                                    onClick = { if (spec.mode != selected) onModeSelected(spec.mode) },
+                                    selected = index == selectedIndex,
+                                    onClick = { if (index != selectedIndex) onTileSelected(index) },
                                     modifier = Modifier.weight(1f).fillMaxHeight(),
                                 )
                             }
@@ -95,7 +100,7 @@ fun EquationTypeSection(
             }
 
             Text(
-                text = stringResource(specFor(selected).summary),
+                text = summary,
                 style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
@@ -105,7 +110,7 @@ fun EquationTypeSection(
 
 @Composable
 private fun ModeTile(
-    spec: ModeTileSpec,
+    spec: TileSpec,
     selected: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,

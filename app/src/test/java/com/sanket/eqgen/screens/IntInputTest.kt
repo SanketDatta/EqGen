@@ -36,8 +36,9 @@ class IntInputTest {
     @Test
     fun sanitize_limitsDigitCount() {
         assertEquals(3, IntInput.MAX_DIGITS)
-        assertEquals("123", IntInput.sanitize("12345"))
-        assertEquals("-123", IntInput.sanitize("-12345"))
+        assertEquals(4, IntInput.MAX_TYPED_DIGITS)
+        assertEquals("1234", IntInput.sanitize("12345"))
+        assertEquals("-1234", IntInput.sanitize("-12345"))
     }
 
     @Test
@@ -144,6 +145,31 @@ class IntInputTest {
             val text = IntInput.randomValue(random).toString()
             assertEquals(text, IntInput.sanitize(text))
             assertTrue(IntInput.validate(text) is FieldValidation.Valid)
+        }
+    }
+
+    // ---- paste never turns an out-of-range number into a valid one ----
+
+    @Test
+    fun sanitize_keepsFourDigits_soTheRangeErrorShows() {
+        assertEquals("1000", IntInput.sanitize("1000"))
+        assertEquals(FieldValidation.Invalid(InputError.OutOfRange), IntInput.validate(IntInput.sanitize("1000")))
+        assertEquals(FieldValidation.Invalid(InputError.OutOfRange), IntInput.validate(IntInput.sanitize("-1000")))
+    }
+
+    @Test
+    fun sanitize_neverMakesALongNumberValid() {
+        val random = kotlin.random.Random(6)
+        repeat(2_000) {
+            val length = random.nextInt(4, 15)
+            val digits = buildString {
+                append(random.nextInt(1, 10)) // no leading zero
+                repeat(length - 1) { append(random.nextInt(10)) }
+            }
+            for (raw in listOf(digits, "-$digits")) {
+                val result = IntInput.validate(IntInput.sanitize(raw))
+                assertTrue("$raw -> $result", result is FieldValidation.Invalid)
+            }
         }
     }
 }

@@ -12,8 +12,8 @@ enum class GeneratorMode(val fields: List<InputField>) {
     LinearOneVar(listOf(InputField.Root)),
     LinearTwoVar(listOf(InputField.X, InputField.Y)),
     LinearPair(listOf(InputField.X, InputField.Y)),
-    Quadratic(listOf(InputField.Root1, InputField.Root2)),
     LinearSystem3(listOf(InputField.X, InputField.Y, InputField.Z)),
+    Quadratic(listOf(InputField.Root1, InputField.Root2)),
     Cubic(listOf(InputField.Root1, InputField.Root2, InputField.Root3)),
 }
 
@@ -55,7 +55,8 @@ data class GeneratorUiState(
     /** True when Generate would regenerate the displayed result rather than create a new request. */
     val isRegeneration: Boolean get() = request != null && request == result?.request
 
-    fun withMode(newMode: GeneratorMode): GeneratorUiState = copy(mode = newMode)
+    /** Switching mode keeps inputs and result but forgets the focused field, so ± never acts on a stale one. */
+    fun withMode(newMode: GeneratorMode): GeneratorUiState = copy(mode = newMode, focusedField = null)
 
     /** Stores [rawText] after cleaning it with [IntInput.sanitize]. Fields outside the current mode are ignored. */
     fun withInput(field: InputField, rawText: String): GeneratorUiState =

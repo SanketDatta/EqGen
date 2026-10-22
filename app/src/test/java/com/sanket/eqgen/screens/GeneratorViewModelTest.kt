@@ -233,7 +233,7 @@ class GeneratorViewModelTest {
         viewModel.onToggleSignOfFocused()
         assertSame(before, viewModel.state)
 
-        viewModel.onFieldFocused(InputField.Y)
+        viewModel.onFieldFocused(InputField.Y, true)
         assertTrue(viewModel.state.canToggleSign)
         viewModel.onToggleSignOfFocused()
         assertEquals(listOf("5", "-6"), viewModel.state.fields.map { it.text })
@@ -243,12 +243,51 @@ class GeneratorViewModelTest {
     fun signButton_isDisabledWhenFocusedFieldIsNotInTheMode() {
         val viewModel = newViewModel()
         viewModel.onModeSelected(GeneratorMode.LinearSystem3)
-        viewModel.onFieldFocused(InputField.Z)
+        viewModel.onFieldFocused(InputField.Z, true)
         assertTrue(viewModel.state.canToggleSign)
         viewModel.onModeSelected(GeneratorMode.LinearTwoVar)
         assertFalse(viewModel.state.canToggleSign)
         viewModel.onToggleSignOfFocused()
         assertEquals(listOf("", ""), viewModel.state.fields.map { it.text })
+    }
+
+    @Test
+    fun blur_clearsFocus_andDisablesTheSignButton() {
+        val viewModel = newViewModel()
+        viewModel.onFieldFocused(InputField.Root, true)
+        assertTrue(viewModel.state.canToggleSign)
+        viewModel.onFieldFocused(InputField.Root, false)
+        assertNull(viewModel.state.focusedField)
+        assertFalse(viewModel.state.canToggleSign)
+    }
+
+    @Test
+    fun staleBlurFromAnotherField_doesNotClearTheNewFocus() {
+        val viewModel = newViewModel()
+        viewModel.onModeSelected(GeneratorMode.LinearTwoVar)
+        viewModel.onFieldFocused(InputField.X, true)
+        viewModel.onFieldFocused(InputField.Y, true)  // focus moves X -> Y
+        viewModel.onFieldFocused(InputField.X, false) // X's blur arrives late
+        assertEquals(InputField.Y, viewModel.state.focusedField)
+        assertTrue(viewModel.state.canToggleSign)
+    }
+
+    @Test
+    fun modeSwitch_clearsFocus() {
+        val viewModel = newViewModel()
+        viewModel.onModeSelected(GeneratorMode.LinearTwoVar)
+        viewModel.onFieldFocused(InputField.X, true)
+        viewModel.onModeSelected(GeneratorMode.LinearPair)
+        assertFalse(viewModel.state.canToggleSign)
+    }
+
+    @Test
+    fun pastingFourDigits_showsTheRangeError_andBlocksGenerate() {
+        val viewModel = newViewModel()
+        viewModel.onInputChanged(InputField.Root, "1000")
+        assertEquals("1000", viewModel.state.fields.single().text)
+        assertEquals(InputError.OutOfRange, viewModel.state.fields.single().error)
+        assertFalse(viewModel.state.canGenerate)
     }
 
     // ---- Randomize ----

@@ -37,8 +37,17 @@ class GeneratorViewModel(
         _uiState.value = _uiState.value.withToggledSign(field)
     }
 
-    fun onFieldFocused(field: InputField) {
-        _uiState.value = _uiState.value.withFocus(field)
+    /**
+     * A field gained or lost focus. A blur only clears the focus when it comes from the field that is
+     * currently focused, so the old field's blur arriving after the new field's focus changes nothing.
+     */
+    fun onFieldFocused(field: InputField, focused: Boolean) {
+        val state = _uiState.value
+        _uiState.value = when {
+            focused -> state.withFocus(field)
+            state.focusedField == field -> state.withFocus(null)
+            else -> state
+        }
     }
 
     fun onToggleSignOfFocused() {
@@ -63,7 +72,7 @@ class GeneratorViewModel(
         val state = _uiState.value
         val request = state.request ?: return
         val previous = state.result
-        val next = if (previous != null && previous.request == request) engine.retry(previous) else engine.generate(request)
+        val next = if (previous != null && state.isRegeneration) engine.retry(previous) else engine.generate(request)
         _uiState.value = state.copy(result = next, setupExpanded = false)
     }
 }

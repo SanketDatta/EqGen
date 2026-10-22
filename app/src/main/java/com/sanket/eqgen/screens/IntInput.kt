@@ -32,6 +32,13 @@ object IntInput {
     /** Longest digit run a field accepts; one more than this could never be in range. */
     val MAX_DIGITS: Int = MAX_INPUT_ABS.toString().length
 
+    /**
+     * Digits a field keeps while typing or pasting: one more than [MAX_DIGITS], so a value like 1000 stays
+     * visible and gets the out-of-range error instead of being silently cut to 100. Any digit run this long
+     * is out of range, and cutting a longer one to this length keeps it out of range (leading zeros aside).
+     */
+    val MAX_TYPED_DIGITS: Int = MAX_DIGITS + 1
+
     private val WHOLE_NUMBER = Regex("-?[0-9]+")
 
     /**
@@ -39,7 +46,7 @@ object IntInput {
      * the digit count to [MAX_DIGITS]. Anything else (spaces, dots, commas, letters) is dropped.
      */
     fun sanitize(raw: String): String {
-        val digits = raw.filter { it in '0'..'9' }.take(MAX_DIGITS)
+        val digits = raw.filter { it in '0'..'9' }.take(MAX_TYPED_DIGITS)
         return if (raw.startsWith('-')) "-$digits" else digits
     }
 
