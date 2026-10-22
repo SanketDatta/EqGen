@@ -219,13 +219,11 @@ Single screen, no navigation `[C]`. Top to bottom:
    - Each tile is an official `Card` marked as a radio-group item (`selectableGroup` and `selectable(role = RadioButton)`), with a title, a subtitle and an equation form. The selected tile uses `secondaryContainer` and a 2dp primary border. Text wraps, never truncates, and tiles in a row share one height. Tapping the selected tile does nothing.
    - Summary line, always visible (expanded or collapsed): for example "Pair of linear equations · 2 variables".
    - The expanded flag lives in `GeneratorUiState`, so it survives rotation. It starts expanded, collapses after every successful Generate, and can be reopened at any time.
-3. **Mode hint**: one short line about what to enter.
-4. **Input fields** for the selected mode, equal width in one row: M1 one field ("Root (x)"); M2 and M3 two (x, y); M5 three (x, y, z); M4 two (Root 1, Root 2); M6 three (Root 1, Root 2, Root 3). Inline error under a field; error text is short ("−100 to 100", "Whole numbers only").
-5. **Tool row**: `[C]`
-   - **±** (text button, `OutlinedButton`): flips the sign of the focused field; disabled when no field is focused. It exists because numeric keyboards do not reliably offer a minus key.
-   - **Randomize** (`OutlinedButton` with the icon `R.drawable.ic_casino` and text): fills every field of the current mode with a random integer from −10 to 10, excluding 0, repeats allowed. It does not generate and does not touch the displayed result.
-6. **Generate** (full-width `Button`): enabled only when every field is valid. If the inputs equal the displayed result's request it regenerates under the rule in section 03; otherwise it generates normally. There is no Retry button. `[C]`
-7. **Result** (after the first Generate): `EquationCard` with the equation text and solution, then the graph when the mode has one (not M5). The card uses `animateContentSize()` so it resizes smoothly between one and three equations. `[C]`
+3. **Input card** `[C]`: one rounded card (`Card` with `RoundedCornerShape(16.dp)`) in `primaryContainer`, so it reads as a different area from the "Equation type" card and the result card. Top to bottom:
+   - **Mode hint**: one short line about what to enter.
+   - **Input fields** for the selected mode, equal width in one row: M1 one field ("Root (x)"); M2 and M3 two (x, y); M5 three (x, y, z); M4 two (Root 1, Root 2); M6 three (Root 1, Root 2, Root 3). Inline error under a field; error text is short ("−100 to 100", "Whole numbers only").
+   - **Action row**, left to right: **±** (`OutlinedIconButton`, `R.drawable.ic_plus_minus`, content description "Change sign of the selected field"): flips the sign of the focused field, disabled when no field is focused, and exists because numeric keyboards do not reliably offer a minus key; **Generate** (`Button`, fills the remaining width): enabled only when every field is valid, regenerates under the rule in section 03 when the inputs equal the displayed request, and there is no Retry button; **Randomize** (`OutlinedIconButton`, `R.drawable.ic_casino`, content description "Randomize"): fills every field of the current mode with a random integer from −10 to 10, excluding 0, repeats allowed, without generating and without touching the displayed result.
+4. **Result** (after the first Generate): `EquationCard` with the equation text and solution, then the graph when the mode has one (not M5). The card uses `animateContentSize()` so it resizes smoothly between one and three equations. `[C]`
 
 Input rules `[C]`: integers only, optional leading minus, inline error under the field, numeric keyboard. Typed text is cleaned as it arrives. `[P]` Cleaning: ASCII digits only, one leading `-`, at most 4 digits (one more than the 3 a valid value needs, so a pasted 1000 shows the range error instead of becoming 100). Out-of-range values (beyond ±100) show an inline error and block Generate. Typed inputs are kept when switching modes, and fields shared between modes carry over.
 IME Done on the last field generates when inputs are valid, then hides the keyboard. `[P]`
@@ -235,7 +233,8 @@ No icons from the Compose icon library `[C]` (`material-icons-core` or `-extende
 | Asset | Used for | Status |
 |-------|----------|--------|
 | `ic_expand_more.xml` | chevron on the "Equation type" header | to be added by the developer |
-| `ic_casino.xml` | Randomize button | to be added by the developer |
+| `ic_casino.xml` | Randomize icon button | to be added by the developer |
+| `ic_plus_minus.xml` | ± icon button | to be added by the developer |
 
 Empty state: short hint text, no card and no graph.
 Error state: inline field messages only; there is no network or generation failure path in v1.
@@ -326,6 +325,8 @@ All six modes generate valid, verified equations; regeneration works as specifie
 | D-035 | "=" alignment uses plain Row/Column columns, not `alignBy` or a custom layout | C |
 | D-036 | Input cleaning keeps up to 4 digits so over-range pastes show the range error instead of being cut to a valid number | P |
 | D-037 | Focus is a changed event (gain and loss); a blur from a non-focused field is ignored; switching mode clears the focused field | C |
+| D-039 | The selected equation type is remembered between launches in `SharedPreferences` through a `ModeStore` interface (default store remembers nothing); typed values, results and the expanded flag are not saved | C |
+| D-040 | Input section is one `primaryContainer` card holding hint, fields and an icon-only ± / Generate / icon-only Randomize row | C |
 | D-038 | `presentation` never imports `screens`: `EquationTypeSection` takes `TileSpec` data; `screens` maps `ModeTileSpecs` onto it | C |
 
 ### Open questions
@@ -349,3 +350,4 @@ Integers only; no singular or no-solution systems; no export; one screen; M5 has
 - 2026-10-19: implemented the revision. Domain (`PolynomialEquation`, M5 generator, formatter lines, cubic graph support) and state layer (six modes, focus, ±, Randomize, collapse flag, Generate-as-regenerate) with 231 JVM tests in total; tile UI (`EquationTypeSection`, `ModeTileSpecs`, three-column `EquationCard`) written and type-checked against stubs only. Gradle build, Layer 2 and Layer 3 pending. Fixed a `-0.0` duplicate x in the sampler's exact points.
 - 2026-10-19: audit fixes: ± now disables on blur (D-037), 4-digit cleaning (D-036), presentation→screens cycle removed (D-038), `GeneratorMode` order matches tile order and `specFor` fails loudly, duplicate section animation dropped, `collectAsStateWithLifecycle`, U+2212 in the range error. 238 JVM tests plus `ModeTileSpecsTest`.
 - 2026-10-21: added the Layer 2 tests (`androidTest/GeneratorScreenTest.kt`, 8 UI tests plus a rotation test in `GeneratorRotationTest`) and the `RESULT_CARD_TAG` test tag on the result card. Not yet run on a device.
+- 2026-10-23: remembered equation type (D-039) and the input card with icon buttons (D-040); 246 JVM tests. UI type-checked against stubs only; Layer 2 tests updated for the icon-only Randomize but not yet run.
