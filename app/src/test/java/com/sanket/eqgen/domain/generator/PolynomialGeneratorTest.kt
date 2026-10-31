@@ -2,12 +2,12 @@ package com.sanket.eqgen.domain.generator
 
 import com.sanket.eqgen.domain.model.GenerationConfig
 import com.sanket.eqgen.domain.model.GenerationRequest
-import kotlin.random.Random
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.random.Random
 
 class PolynomialGeneratorTest {
 

@@ -1,8 +1,8 @@
 package com.sanket.eqgen.screens
 
 import com.sanket.eqgen.domain.model.MAX_INPUT_ABS
-import kotlin.random.Random
 import com.sanket.eqgen.domain.model.isWithinInputLimit
+import kotlin.random.Random
 
 /** Why a field's text cannot be used. Mapped to a message by the UI. */
 enum class InputError {

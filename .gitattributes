@@ -1,0 +1,11 @@
+# Handle line endings automatically for text files
+* text=auto
+gradlew text eol=lf
+
+# Force CRLF (Windows) line endings for batch files
+*.bat text eol=crlf
+
+# Explicitly treat images and assets as binary so Git doesn't alter them
+*.jar binary
+*.png binary
+*.webp binary

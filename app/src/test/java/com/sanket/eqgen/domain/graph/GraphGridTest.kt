@@ -2,15 +2,15 @@ package com.sanket.eqgen.domain.graph
 
 import com.sanket.eqgen.domain.generator.EquationEngine
 import com.sanket.eqgen.domain.model.GenerationRequest
+import org.junit.Assert.assertEquals
+import org.junit.Assert.assertThrows
+import org.junit.Assert.assertTrue
+import org.junit.Test
 import java.util.Locale
 import kotlin.math.abs
 import kotlin.math.floor
 import kotlin.math.log10
 import kotlin.math.pow
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThrows
-import org.junit.Assert.assertTrue
-import org.junit.Test
 
 class GraphGridTest {
 

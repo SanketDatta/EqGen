@@ -6,20 +6,17 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.sanket.eqgen.data.SharedPrefsModeStore
 import com.sanket.eqgen.domain.generator.EquationEngine
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanket.eqgen.presentation.theme.EqGenTheme
 import com.sanket.eqgen.screens.GeneratorScreen
 import com.sanket.eqgen.screens.GeneratorViewModel
 
 /**
  * Wires the ViewModel to the screen. All state lives in [GeneratorViewModel], so it survives rotation.
- *
- * NOTE: `EqGenTheme` is the usual name Android Studio generates from the project name. If your theme
- * function (in presentation/theme/Theme.kt) is named differently, change the import and the call below.
  */
 class MainActivity : ComponentActivity() {
 

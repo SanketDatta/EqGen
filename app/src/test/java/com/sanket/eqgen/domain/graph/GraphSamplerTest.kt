@@ -6,12 +6,12 @@ import com.sanket.eqgen.domain.model.GenerationRequest
 import com.sanket.eqgen.domain.model.LinearEquation1D
 import com.sanket.eqgen.domain.model.LinearEquation2D
 import com.sanket.eqgen.domain.model.PolynomialEquation
-import kotlin.math.abs
-import kotlin.math.max
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThrows
 import org.junit.Assert.assertTrue
 import org.junit.Test
+import kotlin.math.abs
+import kotlin.math.max
 
 class GraphSamplerTest {
 

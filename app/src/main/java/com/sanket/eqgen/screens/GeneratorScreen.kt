@@ -14,21 +14,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
@@ -51,15 +51,15 @@ import com.sanket.eqgen.domain.model.GenerationRequest
 import com.sanket.eqgen.domain.model.GenerationResult
 import com.sanket.eqgen.domain.model.MAX_INPUT_ABS
 import com.sanket.eqgen.presentation.components.EquationCard
-import com.sanket.eqgen.presentation.components.IntegerField
 import com.sanket.eqgen.presentation.components.EquationTypeSection
+import com.sanket.eqgen.presentation.components.IntegerField
 import com.sanket.eqgen.presentation.graph.GraphView
 
 /** Test tag of the result card, so UI tests can read the displayed equation. */
 const val RESULT_CARD_TAG = "equationCard"
 
 /**
- * The single v1 screen (spec section 05). Stateless: everything it shows comes from [state], and every
+ * The single app screen. Stateless: everything it shows comes from [state], and every
  * user action goes out through a callback, so it can be previewed and UI-tested without a ViewModel.
  */
 @OptIn(ExperimentalMaterial3Api::class)
@@ -197,7 +197,7 @@ fun GeneratorScreen(
 
 /**
  * The input section: hint, fields and the tool row in one rounded card. It uses `primaryContainer`, so it
- * reads as a different area from the "Equation type" card and the result card (spec section 05).
+ * reads as a different area from the "Equation type" card and the result card.
  */
 @Composable
 private fun InputCard(hint: String, content: @Composable ColumnScope.() -> Unit) {
@@ -268,7 +268,7 @@ private fun InputField.labelRes(): Int = when (this) {
     InputField.Root3 -> R.string.field_root3
 }
 
-// ---- Previews (sample data only; delete if you don't use previews) ----
+// ---- Previews (sample data only) ----
 
 @Composable
 private fun PreviewScreen(state: GeneratorUiState) {
