@@ -17,16 +17,18 @@ import kotlin.random.Random
 class GeneratorViewModel(
     private val engine: EquationEngine,
     private val random: Random = Random.Default,
+    private val modeStore: ModeStore = NoModeStore,
 ) : ViewModel() {
 
     /** Used by the default ViewModel factory. */
     constructor() : this(EquationEngine())
 
-    private val _uiState = MutableStateFlow(GeneratorUiState())
+    private val _uiState = MutableStateFlow(GeneratorUiState(mode = modeStore.load() ?: GeneratorUiState().mode))
     val uiState: StateFlow<GeneratorUiState> = _uiState.asStateFlow()
 
     fun onModeSelected(mode: GeneratorMode) {
         _uiState.value = _uiState.value.withMode(mode)
+        modeStore.save(mode)
     }
 
     fun onInputChanged(field: InputField, text: String) {

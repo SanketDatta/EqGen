@@ -62,7 +62,6 @@
     <string name="error_not_a_number">Whole numbers only</string>
 
     <!-- Tool row -->
-    <string name="sign_button_label" translatable="false">±</string>
     <string name="action_change_sign">Change sign of the selected field</string>
     <string name="action_randomize">Randomize</string>
 

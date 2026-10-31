@@ -6,6 +6,10 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.viewModels
 import androidx.compose.runtime.getValue
+import androidx.lifecycle.viewmodel.initializer
+import androidx.lifecycle.viewmodel.viewModelFactory
+import com.sanket.eqgen.data.SharedPrefsModeStore
+import com.sanket.eqgen.domain.generator.EquationEngine
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.sanket.eqgen.presentation.theme.EqGenTheme
 import com.sanket.eqgen.screens.GeneratorScreen
@@ -19,7 +23,13 @@ import com.sanket.eqgen.screens.GeneratorViewModel
  */
 class MainActivity : ComponentActivity() {
 
-    private val viewModel: GeneratorViewModel by viewModels()
+    private val viewModel: GeneratorViewModel by viewModels {
+        viewModelFactory {
+            initializer {
+                GeneratorViewModel(EquationEngine(), modeStore = SharedPrefsModeStore(applicationContext))
+            }
+        }
+    }
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

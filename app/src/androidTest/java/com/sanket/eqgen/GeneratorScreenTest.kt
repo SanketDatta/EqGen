@@ -63,7 +63,7 @@ class GeneratorScreenTest {
     private fun type(label: String, text: String) = field(label).performTextReplacement(text)
 
     private val generate get() = rule.onNode(hasText(str(R.string.action_generate)) and hasClickAction())
-    private val randomize get() = rule.onNode(hasText(str(R.string.action_randomize)) and hasClickAction())
+    private val randomize get() = rule.onNode(hasContentDescription(str(R.string.action_randomize)) and hasClickAction())
     private val signButton get() = rule.onNode(hasContentDescription(str(R.string.action_change_sign)))
     private val header get() = rule.onNode(hasText(str(R.string.section_equation_type)) and hasClickAction())
     private val graph get() = rule.onNodeWithContentDescription(str(R.string.graph_description))

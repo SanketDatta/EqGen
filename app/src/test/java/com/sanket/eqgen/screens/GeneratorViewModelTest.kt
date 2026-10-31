@@ -356,4 +356,69 @@ class GeneratorViewModelTest {
 
         assertSame(result, viewModel.state.result)
     }
+
+    // ---- remembered equation type (D-039) ----
+
+    private class FakeStore(var saved: GeneratorMode? = null) : ModeStore {
+        var saves = 0
+        override fun load() = saved
+        override fun save(mode: GeneratorMode) {
+            saved = mode
+            saves++
+        }
+    }
+
+    @Test
+    fun startsWithTheSavedMode_orLinearOneVarWhenNothingIsSaved() {
+        assertEquals(GeneratorMode.LinearOneVar, GeneratorViewModel(EquationEngine(), modeStore = FakeStore()).state.mode)
+        val saved = GeneratorViewModel(EquationEngine(), modeStore = FakeStore(GeneratorMode.Cubic))
+        assertEquals(GeneratorMode.Cubic, saved.state.mode)
+        assertEquals(listOf(InputField.Root1, InputField.Root2, InputField.Root3), saved.state.fields.map { it.field })
+    }
+
+    @Test
+    fun selectingAMode_savesIt_andANewViewModelRestoresIt() {
+        val store = FakeStore()
+        val first = GeneratorViewModel(EquationEngine(), modeStore = store)
+        first.onModeSelected(GeneratorMode.LinearSystem3)
+        assertEquals(GeneratorMode.LinearSystem3, store.saved)
+
+        val second = GeneratorViewModel(EquationEngine(), modeStore = store) // a fresh app launch
+        assertEquals(GeneratorMode.LinearSystem3, second.state.mode)
+    }
+
+    @Test
+    fun typedValuesAndResultsAreNotRestored() {
+        val store = FakeStore()
+        val first = GeneratorViewModel(EquationEngine(), modeStore = store)
+        first.onModeSelected(GeneratorMode.Quadratic)
+        first.onInputChanged(InputField.Root1, "4")
+        first.onInputChanged(InputField.Root2, "5")
+        first.onGenerate()
+
+        val second = GeneratorViewModel(EquationEngine(), modeStore = store)
+        assertEquals(GeneratorMode.Quadratic, second.state.mode)
+        assertEquals(emptyMap<InputField, String>(), second.state.inputs)
+        assertNull(second.state.result)
+        assertTrue(second.state.setupExpanded)
+    }
+
+    @Test
+    fun otherEvents_doNotWriteToTheStore() {
+        val store = FakeStore()
+        val viewModel = GeneratorViewModel(EquationEngine(), modeStore = store)
+        viewModel.onInputChanged(InputField.Root, "3")
+        viewModel.onRandomize()
+        viewModel.onGenerate()
+        viewModel.onSetupExpandedChanged(true)
+        assertEquals(0, store.saves)
+    }
+
+    @Test
+    fun modeFromName_knowsEveryModeAndIgnoresUnknownNames() {
+        for (mode in GeneratorMode.entries) assertEquals(mode, modeFromName(mode.name))
+        assertNull(modeFromName(null))
+        assertNull(modeFromName(""))
+        assertNull(modeFromName("Quartic"))
+    }
 }
