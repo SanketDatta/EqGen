@@ -28,6 +28,7 @@ Whether you are a **teacher** crafting fresh test questions in seconds or a **st
 | Linear System (3 variables) | Shared point $(x_0,y_0,z_0)$ | Three equations with a unique solution   |
 | Quadratic equation          | Roots $x_1,x_2$              | $ax^2+bx+c=0$                            |
 | Cubic equation              | Roots $x_1,x_2,x_3$          | $ax^3+bx^2+cx+d=0$                       |
+
 ...and many more equation types to come!
 
 ### Visual Graphing
@@ -66,6 +67,7 @@ To ensure clean and correct math problems suitable for practice and tests:
 | Unit testing            | JUnit                                       |
 | Minimum Android version | Android 7.0 (API 24)                        |
 | Target Android SDK      | API 37                                      |
+
 **Privacy First:** ΣqGen collects zero data. The only state saved is your last-used equation mode in `SharedPreferences`.
 
 ## Architecture
